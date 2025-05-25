@@ -4,19 +4,19 @@ interface CartItem {
   id: string;
   name: string;
   price: number;
-  quantity: number;
   image: string;
+  quantity: number;
 }
 
 interface CartState {
   items: CartItem[];
-  totalQuantity: number;
+  totalItems: number;
   totalAmount: number;
 }
 
 const initialState: CartState = {
   items: [],
-  totalQuantity: 0,
+  totalItems: 0,
   totalAmount: 0,
 };
 
@@ -24,58 +24,37 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    addToCart(state, action: PayloadAction<CartItem>) {
-      const newItem = action.payload;
-      const existingItem = state.items.find(item => item.id === newItem.id);
-      
-      if (!existingItem) {
-        state.items.push({
-          ...newItem,
-          quantity: 1,
-        });
-      } else {
-        existingItem.quantity++;
-      }
-      
-      state.totalQuantity++;
-      state.totalAmount = state.items.reduce(
-        (total, item) => total + item.price * item.quantity,
-        0
-      );
-    },
-    
-    removeFromCart(state, action: PayloadAction<string>) {
-      const id = action.payload;
-      const existingItem = state.items.find(item => item.id === id);
+    addToCart: (state, action: PayloadAction<CartItem>) => {
+      const existingItem = state.items.find(item => item.id === action.payload.id);
       
       if (existingItem) {
-        state.totalQuantity -= existingItem.quantity;
-        state.totalAmount -= existingItem.price * existingItem.quantity;
-        state.items = state.items.filter(item => item.id !== id);
+        existingItem.quantity += 1;
+      } else {
+        state.items.push({ ...action.payload, quantity: 1 });
       }
-    },
-    
-    updateQuantity(
-      state,
-      action: PayloadAction<{ id: string; quantity: number }>
-    ) {
-      const { id, quantity } = action.payload;
-      const item = state.items.find(item => item.id === id);
       
+      state.totalItems = state.items.reduce((total, item) => total + item.quantity, 0);
+      state.totalAmount = state.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+    },
+    
+    removeFromCart: (state, action: PayloadAction<string>) => {
+      state.items = state.items.filter(item => item.id !== action.payload);
+      state.totalItems = state.items.reduce((total, item) => total + item.quantity, 0);
+      state.totalAmount = state.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+    },
+    
+    updateQuantity: (state, action: PayloadAction<{ id: string; quantity: number }>) => {
+      const item = state.items.find(item => item.id === action.payload.id);
       if (item) {
-        const quantityDifference = quantity - item.quantity;
-        item.quantity = quantity;
-        state.totalQuantity += quantityDifference;
-        state.totalAmount = state.items.reduce(
-          (total, item) => total + item.price * item.quantity,
-          0
-        );
+        item.quantity = action.payload.quantity;
+        state.totalItems = state.items.reduce((total, item) => total + item.quantity, 0);
+        state.totalAmount = state.items.reduce((total, item) => total + (item.price * item.quantity), 0);
       }
     },
     
-    clearCart(state) {
+    clearCart: (state) => {
       state.items = [];
-      state.totalQuantity = 0;
+      state.totalItems = 0;
       state.totalAmount = 0;
     },
   },

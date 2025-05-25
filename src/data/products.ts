@@ -5,27 +5,51 @@ export const products: Product[] = [
   {
     id: 1,
     name: "4K Ultra HD Smart TV",
-    description: "55-inch 4K Smart LED TV with HDR and built-in streaming apps",
-    price: 699.99,
-    image: "https://images.unsplash.com/photo-1601944179066-29786cb9d32a?w=500",
+    description: "Experience stunning visuals with our 4K Ultra HD Smart TV. Featuring HDR technology, smart connectivity, and a sleek design that enhances any living space.",
+    price: 799.99,
+    image: "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=800",
+    images: [
+      "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=800",
+      "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=800",
+      "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=800",
+      "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=800"
+    ],
     category: "Electronics",
-    rating: 4.5,
+    rating: 4.8,
     stock: 15,
     brand: "TechVision",
-    features: ["4K Resolution", "Smart TV", "HDR", "Voice Control"],
+    features: [
+      "4K Ultra HD Resolution",
+      "Smart TV Capabilities",
+      "HDR Technology",
+      "Multiple HDMI Ports",
+      "Built-in WiFi"
+    ],
     isFeatured: true
   },
   {
     id: 2,
     name: "Wireless Noise-Canceling Headphones",
-    description: "Premium wireless headphones with active noise cancellation",
+    description: "Immerse yourself in your music with our premium wireless headphones. Featuring active noise cancellation, 30-hour battery life, and crystal-clear sound quality.",
     price: 299.99,
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500",
+    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800",
+    images: [
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800",
+      "https://images.unsplash.com/photo-1572536147248-ac59a8abfa4b?w=800",
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800",
+      "https://images.unsplash.com/photo-1572536147248-ac59a8abfa4b?w=800"
+    ],
     category: "Electronics",
-    rating: 4.8,
-    stock: 25,
+    rating: 4.6,
+    stock: 20,
     brand: "SoundMaster",
-    features: ["Active Noise Cancellation", "30h Battery Life", "Bluetooth 5.0"]
+    features: [
+      "Active Noise Cancellation",
+      "30-hour Battery Life",
+      "Bluetooth 5.0",
+      "Built-in Microphone",
+      "Comfortable Design"
+    ]
   },
 
   // Fashion
@@ -108,14 +132,24 @@ export const products: Product[] = [
   {
     id: 51,
     name: "Smart Fitness Watch",
-    description: "Advanced fitness tracker with heart rate monitoring",
+    description: "Track your fitness goals with our advanced smart watch. Features heart rate monitoring, GPS tracking, and long battery life.",
     price: 199.99,
-    image: "https://images.unsplash.com/photo-1575311373937-040b8e3fd6ce?w=500",
+    image: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800",
+    images: [
+      "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800",
+      "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=800"
+    ],
     category: "Sports",
-    rating: 4.7,
-    stock: 40,
+    rating: 4.5,
+    stock: 25,
     brand: "FitTech",
-    features: ["Heart Rate Monitor", "GPS", "Sleep Tracking"]
+    features: [
+      "Heart Rate Monitor",
+      "GPS Tracking",
+      "Sleep Tracking",
+      "Water Resistant",
+      "7-day Battery Life"
+    ]
   },
   {
     id: 52,

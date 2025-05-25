@@ -1,6 +1,7 @@
 'use client';
 
 import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ShoppingCart, Star, Heart } from 'lucide-react';
@@ -18,9 +19,33 @@ interface ProductCardProps {
 
 export default function ProductCard({ id, name, price, image, description, rating = 4.5 }: ProductCardProps) {
   const dispatch = useDispatch();
+  const router = useRouter();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent navigation when clicking the cart button
+    dispatch(
+      addToCart({
+        id,
+        name,
+        price,
+        image,
+        quantity: 1,
+      })
+    );
+    toast.success(`${name} added to cart!`);
+  };
+
+  const handleWishlist = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent navigation when clicking the wishlist button
+    // Add wishlist functionality here
+    toast.success(`${name} added to wishlist!`);
+  };
 
   return (
-    <div className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
+    <div 
+      className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer"
+      onClick={() => router.push(`/products/${id}`)}
+    >
       <div className="relative aspect-square overflow-hidden">
         <Image
           src={image}
@@ -30,7 +55,10 @@ export default function ProductCard({ id, name, price, image, description, ratin
         />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
         <div className="absolute top-4 right-4">
-          <button className="p-2 rounded-full bg-white/80 hover:bg-white text-gray-600 hover:text-red-500 transition-colors">
+          <button 
+            onClick={handleWishlist}
+            className="p-2 rounded-full bg-white/80 hover:bg-white text-gray-600 hover:text-red-500 transition-colors"
+          >
             <Heart className="h-5 w-5" />
           </button>
         </div>
@@ -58,18 +86,7 @@ export default function ProductCard({ id, name, price, image, description, ratin
         <div className="flex items-center justify-between">
           <span className="text-lg font-bold text-blue-600">${price}</span>
           <button
-            onClick={() => {
-              dispatch(
-                addToCart({
-                  id,
-                  name,
-                  price,
-                  image,
-                  quantity: 1,
-                })
-              );
-              toast.success(`${name} added to cart!`);
-            }}
+            onClick={handleAddToCart}
             className="p-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
           >
             <ShoppingCart className="h-5 w-5" />
