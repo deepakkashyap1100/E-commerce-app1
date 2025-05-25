@@ -9,14 +9,15 @@ import { toast } from 'react-hot-toast';
 import { addToCart } from '@/store/features/cartSlice';
 import { products } from '@/data/products';
 import ProductCard from '@/components/ProductCard/ProductCard';
+import Link from 'next/link';
 
 interface Product {
-  id: string;
+  id: number;
   name: string;
   description: string;
   price: number;
   image: string;
-  images?: string[];
+  images: string[];
   category: string;
   rating: number;
   stock: number;
@@ -24,27 +25,40 @@ interface Product {
   features?: string[];
 }
 
-export default function ProductDetailPage() {
-  const { id } = useParams();
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default function ProductDetail({ params }: PageProps) {
   const dispatch = useDispatch();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
-  const product = products.find((p) => p.id.toString() === id) as Product;
+  const product = products.find(p => p.id === parseInt(params.id));
+  const productImages =
+    product && Array.isArray(product.images) && product.images.length > 0
+      ? product.images
+      : product && product.image
+        ? [product.image]
+        : [];
 
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-semibold mb-4">Product not found</h2>
-          <p className="text-gray-600">The product you're looking for doesn't exist.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Product not found</h1>
+          <Link
+            href="/products"
+            className="text-blue-600 hover:text-blue-700 font-medium"
+          >
+            Return to products
+          </Link>
         </div>
       </div>
     );
   }
-
-  // Use product.images if available, otherwise use an array with just the main image
-  const productImages = product.images || [product.image];
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) => 
@@ -66,7 +80,7 @@ export default function ProductDetailPage() {
       image: product.image,
       quantity
     }));
-    toast.success('Added to cart');
+    toast.success('Added to cart!');
   };
 
   const relatedProducts = products
@@ -96,46 +110,45 @@ export default function ProductDetailPage() {
         </nav>
 
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
             {/* Image Gallery */}
-            <div className="space-y-4">
-              <div className="relative aspect-square rounded-lg overflow-hidden">
+            <div className="relative">
+              <div className="aspect-square relative rounded-lg overflow-hidden">
                 <Image
                   src={productImages[currentImageIndex]}
                   alt={product.name}
                   fill
                   className="object-cover"
-                  priority
                 />
-                {productImages.length > 1 && (
-                  <>
-                    <button
-                      onClick={handlePrevImage}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white transition-colors"
-                    >
-                      <ChevronLeft className="h-6 w-6" />
-                    </button>
-                    <button
-                      onClick={handleNextImage}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white transition-colors"
-                    >
-                      <ChevronRight className="h-6 w-6" />
-                    </button>
-                  </>
-                )}
               </div>
+              
+              {/* Navigation Buttons */}
+              {productImages.length > 1 && (
+                <>
+                  <button
+                    onClick={handlePrevImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-all"
+                  >
+                    <ChevronLeft className="h-6 w-6" />
+                  </button>
+                  <button
+                    onClick={handleNextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-all"
+                  >
+                    <ChevronRight className="h-6 w-6" />
+                  </button>
+                </>
+              )}
 
               {/* Thumbnails */}
               {productImages.length > 1 && (
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-4 gap-4 mt-4">
                   {productImages.map((image, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
                       className={`relative aspect-square rounded-lg overflow-hidden ${
-                        currentImageIndex === index
-                          ? 'ring-2 ring-blue-600'
-                          : 'hover:opacity-75'
+                        currentImageIndex === index ? 'ring-2 ring-blue-600' : ''
                       }`}
                     >
                       <Image
@@ -167,100 +180,90 @@ export default function ProductDetailPage() {
                       />
                     ))}
                   </div>
-                  <span className="text-gray-600">({product.rating})</span>
+                  <span className="text-gray-600">({product.rating} rating)</span>
                 </div>
               </div>
 
-              <div className="flex items-baseline gap-4">
-                <span className="text-3xl font-bold text-gray-900">
-                  ${product.price.toFixed(2)}
-                </span>
-                <span className="text-lg text-gray-500 line-through">
-                  ${(product.price * 1.2).toFixed(2)}
-                </span>
-                <span className="text-sm font-medium text-green-600 bg-green-100 px-2 py-1 rounded">
-                  20% OFF
-                </span>
+              <div className="text-3xl font-bold text-blue-600">
+                ${product.price.toFixed(2)}
               </div>
 
               <p className="text-gray-600">{product.description}</p>
 
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center border rounded-lg">
-                    <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="px-3 py-2 text-gray-600 hover:text-gray-900"
-                    >
-                      -
-                    </button>
-                    <span className="px-4 py-2 text-gray-900">{quantity}</span>
-                    <button
-                      onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                      className="px-3 py-2 text-gray-600 hover:text-gray-900"
-                    >
-                      +
-                    </button>
-                  </div>
-                  <span className="text-sm text-gray-500">
-                    {product.stock} items available
-                  </span>
-                </div>
-
-                <div className="flex gap-4">
+              {/* Quantity Selector */}
+              <div className="flex items-center gap-4">
+                <label htmlFor="quantity" className="text-gray-700">Quantity:</label>
+                <div className="flex items-center border rounded-lg">
                   <button
-                    onClick={handleAddToCart}
-                    className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                    className="px-3 py-1 text-gray-600 hover:text-blue-600"
                   >
-                    <ShoppingCart className="h-5 w-5" />
-                    Add to Cart
+                    -
                   </button>
-                  <button className="p-3 text-gray-600 hover:text-gray-900 border rounded-lg hover:bg-gray-50 transition-colors">
-                    <Heart className="h-6 w-6" />
-                  </button>
-                  <button className="p-3 text-gray-600 hover:text-gray-900 border rounded-lg hover:bg-gray-50 transition-colors">
-                    <Share2 className="h-6 w-6" />
+                  <input
+                    type="number"
+                    id="quantity"
+                    min="1"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                    className="w-16 text-center border-x py-1"
+                  />
+                  <button
+                    onClick={() => setQuantity(q => q + 1)}
+                    className="px-3 py-1 text-gray-600 hover:text-blue-600"
+                  >
+                    +
                   </button>
                 </div>
               </div>
 
-              <div className="border-t pt-6 space-y-4">
-                <div className="flex items-center gap-3">
-                  <Truck className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <h3 className="font-medium text-gray-900">Free Shipping</h3>
-                    <p className="text-sm text-gray-500">On orders over $50</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <RefreshCw className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <h3 className="font-medium text-gray-900">Easy Returns</h3>
-                    <p className="text-sm text-gray-500">30 days return policy</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Shield className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <h3 className="font-medium text-gray-900">Secure Payment</h3>
-                    <p className="text-sm text-gray-500">100% secure payment</p>
-                  </div>
-                </div>
+              {/* Action Buttons */}
+              <div className="flex gap-4">
+                <button
+                  onClick={handleAddToCart}
+                  className="flex-1 bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                >
+                  <ShoppingCart className="h-5 w-5" />
+                  Add to Cart
+                </button>
+                <button className="p-3 border rounded-lg hover:bg-gray-50 transition-colors">
+                  <Heart className="h-6 w-6 text-gray-600" />
+                </button>
+                <button className="p-3 border rounded-lg hover:bg-gray-50 transition-colors">
+                  <Share2 className="h-6 w-6 text-gray-600" />
+                </button>
               </div>
 
+              {/* Features */}
               {product.features && (
                 <div className="border-t pt-6">
-                  <h3 className="font-medium text-gray-900 mb-4">Features</h3>
-                  <ul className="grid grid-cols-2 gap-2">
+                  <h3 className="font-semibold text-gray-900 mb-4">Features</h3>
+                  <ul className="space-y-2">
                     {product.features.map((feature, index) => (
                       <li key={index} className="flex items-center gap-2 text-gray-600">
-                        <div className="h-1.5 w-1.5 bg-blue-600 rounded-full" />
+                        <div className="h-1.5 w-1.5 rounded-full bg-blue-600" />
                         {feature}
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
+
+              {/* Additional Info */}
+              <div className="border-t pt-6 space-y-4">
+                <div className="flex items-center gap-2 text-gray-600">
+                  <Truck className="h-5 w-5" />
+                  <span>Free shipping on orders over $50</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-600">
+                  <RefreshCw className="h-5 w-5" />
+                  <span>30-day return policy</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-600">
+                  <Shield className="h-5 w-5" />
+                  <span>2-year warranty</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
