@@ -32,7 +32,7 @@ export default function ProductsPage() {
   const [showFilters, setShowFilters] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('featured')
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all')
+  const [selectedCategory, setSelectedCategory] = useState(searchParams?.get('category') || 'all')
   const [filters, setFilters] = useState<FilterOptions>({
     priceRange: [0, 1000],
     rating: null,
@@ -41,8 +41,8 @@ export default function ProductsPage() {
   })
 
   // Get unique categories and brands
-  const categories = ['all', ...new Set(products.map(p => p.category))]
-  const brands = [...new Set(products.map(p => p.brand))]
+  const categories = ['all', ...Array.from(new Set(products.map(p => p.category)))]
+  const brands = Array.from(new Set(products.map(p => p.brand))).filter((b): b is string => !!b)
 
   // Filter and sort products
   const filteredProducts = products.filter(product => {
@@ -72,7 +72,10 @@ export default function ProductsPage() {
     }
 
     // Brands
-    if (filters.brands.length > 0 && !filters.brands.includes(product.brand)) {
+    if (
+      filters.brands.length > 0 &&
+      (!product.brand || !filters.brands.includes(product.brand))
+    ) {
       return false
     }
 
