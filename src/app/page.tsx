@@ -109,19 +109,13 @@ export default function HomePage() {
               <p className="text-xl md:text-2xl mb-8 text-gray-200">
                 Shop the newest trends in fashion, electronics, and more
               </p>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex items-center gap-4">
                 <Link
                   href="/products"
                   className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 transition-colors text-lg font-semibold"
                 >
                   Shop Now
                   <ArrowRight className="h-5 w-5" />
-                </Link>
-                <Link
-                  href="/categories"
-                  className="inline-flex items-center gap-2 bg-white/10 text-white px-8 py-4 rounded-lg hover:bg-white/20 transition-colors text-lg font-semibold"
-                >
-                  Browse Categories
                 </Link>
               </div>
             </div>

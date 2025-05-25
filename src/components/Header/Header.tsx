@@ -14,10 +14,9 @@ export default function Header() {
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
-  const navLinks = [
+  const navigation = [
     { href: '/', label: 'Home' },
     { href: '/products', label: 'Products' },
-    { href: '/categories', label: 'Categories' },
     { href: '/deals', label: 'Deals' },
   ];
 
@@ -39,7 +38,7 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
+            {navigation.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -113,7 +112,7 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t">
             <nav className="flex flex-col space-y-4">
-              {navLinks.map((link) => (
+              {navigation.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
